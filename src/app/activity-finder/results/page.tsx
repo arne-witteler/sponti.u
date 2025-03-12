@@ -112,7 +112,7 @@ export default function ActivityResults() {
             },
             (error) => {
               console.error("Error getting location:", error);
-            }
+            },
           );
         }
       } catch (error) {
@@ -152,7 +152,7 @@ export default function ActivityResults() {
       <main className="flex-1 container mx-auto px-4 py-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-64">
-            <Loader2 className="h-8 w-8 text-blue-600 animate-spin mb-4" />
+            <Loader2 className="h-8 w-8 text-orange-500 animate-spin mb-4" />
             <p className="text-gray-600">Suche nach passenden Aktivitäten...</p>
           </div>
         ) : activities.length === 0 ? (
@@ -206,7 +206,7 @@ export default function ActivityResults() {
                       userLocation={userLocation}
                       onSelectActivity={(activity) => {
                         const index = activities.findIndex(
-                          (a) => a.id === activity.id
+                          (a) => a.id === activity.id,
                         );
                         if (index !== -1) {
                           setCurrentActivityIndex(index);
@@ -224,7 +224,7 @@ export default function ActivityResults() {
                   userLocation={userLocation}
                   onSelectActivity={(activity) => {
                     const index = activities.findIndex(
-                      (a) => a.id === activity.id
+                      (a) => a.id === activity.id,
                     );
                     if (index !== -1) {
                       setCurrentActivityIndex(index);

@@ -58,7 +58,7 @@ export default function ActivityCard({
           <div className="space-y-2">
             {activity.location && (
               <div className="flex items-center text-sm">
-                <MapPin className="mr-2 h-4 w-4 text-blue-600" />
+                <MapPin className="mr-2 h-4 w-4 text-orange-500" />
                 <span>{activity.location}</span>
                 {distance > 0 && (
                   <span className="ml-auto text-gray-500">
@@ -70,7 +70,7 @@ export default function ActivityCard({
 
             {activity.start_time && (
               <div className="flex items-center text-sm">
-                <Clock className="mr-2 h-4 w-4 text-blue-600" />
+                <Clock className="mr-2 h-4 w-4 text-orange-500" />
                 <span>
                   {new Date(activity.start_time).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -84,7 +84,7 @@ export default function ActivityCard({
 
             {(activity.min_people || activity.max_people) && (
               <div className="flex items-center text-sm">
-                <Users className="mr-2 h-4 w-4 text-blue-600" />
+                <Users className="mr-2 h-4 w-4 text-orange-500" />
                 <span>
                   {activity.min_people && activity.max_people
                     ? `${activity.min_people}-${activity.max_people} Personen`
@@ -97,7 +97,7 @@ export default function ActivityCard({
 
             {activity.price !== undefined && activity.price !== null && (
               <div className="flex items-center text-sm font-medium">
-                <span className="text-blue-600">
+                <span className="text-orange-500">
                   {activity.price === 0
                     ? "Kostenlos"
                     : `${activity.price.toFixed(2)} €`}
@@ -115,7 +115,7 @@ export default function ActivityCard({
           >
             Überspringen
           </Button>
-          <Button className="flex-1 bg-blue-600 hover:bg-blue-700" asChild>
+          <Button className="flex-1 bg-orange-500 hover:bg-orange-600" asChild>
             <a
               href={activity.booking_url || "#"}
               target="_blank"

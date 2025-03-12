@@ -23,26 +23,26 @@ export default function Navbar() {
   return (
     <nav className="w-full border-b border-gray-200 bg-white py-3 sticky top-0 z-50">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" prefetch className="text-xl font-bold text-blue-600">
+        <Link href="/" prefetch className="text-xl font-bold text-orange-500">
           Sponti
         </Link>
 
         <div className="hidden md:flex gap-6 items-center">
           <Link
             href="/#how-it-works"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600"
+            className="text-sm font-medium text-gray-700 hover:text-orange-500"
           >
             Wie es funktioniert
           </Link>
           <Link
             href="/#features"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600"
+            className="text-sm font-medium text-gray-700 hover:text-orange-500"
           >
             Funktionen
           </Link>
           <Link
             href="/activity-finder"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600"
+            className="text-sm font-medium text-gray-700 hover:text-orange-500"
           >
             Aktivitäten finden
           </Link>
@@ -53,7 +53,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/activity-finder"
-                className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+                className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-orange-500"
               >
                 <MapPin className="w-4 h-4" />
                 <span>Aktivitäten</span>
@@ -73,12 +73,12 @@ export default function Navbar() {
             <>
               <Link
                 href="/sign-in"
-                className="hidden md:block px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+                className="hidden md:block px-4 py-2 text-sm font-medium text-gray-700 hover:text-orange-500"
               >
                 Anmelden
               </Link>
               <Link href="/sign-up">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
                   Registrieren
                 </Button>
               </Link>

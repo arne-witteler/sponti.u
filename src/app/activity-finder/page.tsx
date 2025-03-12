@@ -37,7 +37,7 @@ export default function ActivityFinder() {
         (error) => {
           console.error("Error getting location:", error);
           setIsLocating(false);
-        }
+        },
       );
     } else {
       alert("Geolocation wird von deinem Browser nicht unterstützt.");
@@ -160,7 +160,7 @@ export default function ActivityFinder() {
                     variant={
                       preferences.ageGroup === age.value ? "default" : "outline"
                     }
-                    className={`justify-start ${preferences.ageGroup === age.value ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
+                    className={`justify-start ${preferences.ageGroup === age.value ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
                     onClick={() =>
                       setPreferences({
                         ...preferences,
@@ -187,7 +187,7 @@ export default function ActivityFinder() {
                       ? "default"
                       : "outline"
                   }
-                  className={`justify-start ${preferences.timePreference === "today" ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
+                  className={`justify-start ${preferences.timePreference === "today" ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
                   onClick={() =>
                     setPreferences({ ...preferences, timePreference: "today" })
                   }
@@ -202,7 +202,7 @@ export default function ActivityFinder() {
                       ? "default"
                       : "outline"
                   }
-                  className={`justify-start ${preferences.timePreference === "tomorrow" ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
+                  className={`justify-start ${preferences.timePreference === "tomorrow" ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
                   onClick={() =>
                     setPreferences({
                       ...preferences,
@@ -218,7 +218,7 @@ export default function ActivityFinder() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-orange-500 hover:bg-orange-600"
             >
               Aktivitäten finden
             </Button>

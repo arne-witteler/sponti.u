@@ -28,7 +28,7 @@ export default function ActivityMap({
     >
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center p-4">
-          <Navigation className="mx-auto h-8 w-8 text-blue-600 mb-2" />
+          <Navigation className="mx-auto h-8 w-8 text-orange-500 mb-2" />
           <p className="text-gray-500 text-sm">
             Interaktive Karte wird geladen...
           </p>
@@ -54,7 +54,7 @@ export default function ActivityMap({
               onClick={() => onSelectActivity && onSelectActivity(activity)}
             >
               <div
-                className={`p-1 rounded-full ${selectedActivityId === activity.id ? "bg-blue-600" : "bg-gray-400"}`}
+                className={`p-1 rounded-full ${selectedActivityId === activity.id ? "bg-orange-500" : "bg-gray-400"}`}
               >
                 <MapPin className="h-5 w-5 text-white" />
               </div>
@@ -65,7 +65,7 @@ export default function ActivityMap({
         {/* User location */}
         {userLocation && (
           <div className="absolute" style={{ top: "50%", left: "50%" }}>
-            <div className="p-1 rounded-full bg-blue-600 ring-4 ring-blue-200">
+            <div className="p-1 rounded-full bg-orange-500 ring-4 ring-orange-200">
               <div className="h-3 w-3 rounded-full bg-white" />
             </div>
           </div>
