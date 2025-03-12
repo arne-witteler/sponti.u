@@ -50,7 +50,7 @@ export default function Home() {
                   className="w-full h-full object-cover"
                 >
                   <source
-                    src="https://storage.googleapis.com/tempo-public-assets/outdoor-activities.mp4"
+                    src="https://www.youtube.com/watch?v=qEEBR3Hwf3s"
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.
@@ -171,23 +171,24 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-orange-500 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-yellow-500"></div>
+        <div className="container mx-auto px-4 text-center relative z-10 text-white">
           <h2 className="text-3xl font-bold mb-4">
             Bereit für spontane Abenteuer?
           </h2>
-          <p className="text-orange-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-white/90 mb-8 max-w-2xl mx-auto">
             Entdecke Aktivitäten in deiner Nähe und mache das Beste aus deiner
             Freizeit.
           </p>
           <Button
             asChild
             size="lg"
-            className="bg-white text-orange-500 hover:bg-gray-100"
+            className="bg-white hover:bg-gray-100 text-orange-500"
           >
             <Link href="/activity-finder">
-              Jetzt spotan werden
-              <ArrowUpRight className="ml-2 w-4 h-4" />
+              Jetzt spontan werden
+              <ArrowUpRight className="ml-2 h-4 w-4 text-orange-500" />
             </Link>
           </Button>
         </div>
