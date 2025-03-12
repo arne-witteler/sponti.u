@@ -112,7 +112,7 @@ export default function ActivityResults() {
             },
             (error) => {
               console.error("Error getting location:", error);
-            },
+            }
           );
         }
       } catch (error) {
@@ -206,7 +206,7 @@ export default function ActivityResults() {
                       userLocation={userLocation}
                       onSelectActivity={(activity) => {
                         const index = activities.findIndex(
-                          (a) => a.id === activity.id,
+                          (a) => a.id === activity.id
                         );
                         if (index !== -1) {
                           setCurrentActivityIndex(index);
@@ -224,7 +224,7 @@ export default function ActivityResults() {
                   userLocation={userLocation}
                   onSelectActivity={(activity) => {
                     const index = activities.findIndex(
-                      (a) => a.id === activity.id,
+                      (a) => a.id === activity.id
                     );
                     if (index !== -1) {
                       setCurrentActivityIndex(index);

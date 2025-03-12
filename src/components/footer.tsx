@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Twitter, Instagram, Facebook } from "lucide-react";
+import { AiFillTikTok, AiFillInstagram } from "react-icons/ai";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,14 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* App Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">SpontanAktiv</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Sponti</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/#features"
                   className="text-gray-600 hover:text-blue-600"
                 >
-                  Funktionen
+                  Über uns
                 </Link>
               </li>
               <li>
@@ -25,7 +25,7 @@ export default function Footer() {
                   href="/activity-finder"
                   className="text-gray-600 hover:text-blue-600"
                 >
-                  Aktivitäten finden
+                  Das Team
                 </Link>
               </li>
               <li>
@@ -33,15 +33,7 @@ export default function Footer() {
                   href="/dashboard"
                   className="text-gray-600 hover:text-blue-600"
                 >
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#how-it-works"
-                  className="text-gray-600 hover:text-blue-600"
-                >
-                  Wie es funktioniert
+                  Karriere
                 </Link>
               </li>
             </ul>
@@ -49,26 +41,18 @@ export default function Footer() {
 
           {/* Activities Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Aktivitäten</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Für Unternehmen
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Outdoor
+                  Partner werden
                 </Link>
               </li>
               <li>
                 <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Indoor
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Kultur
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Sport
+                  Vorteile
                 </Link>
               </li>
             </ul>
@@ -81,11 +65,6 @@ export default function Footer() {
               <li>
                 <Link href="#" className="text-gray-600 hover:text-blue-600">
                   FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Hilfe
                 </Link>
               </li>
               <li>
@@ -131,21 +110,18 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-200">
           <div className="text-gray-600 mb-4 md:mb-0">
-            © {currentYear} SpontanAktiv. Alle Rechte vorbehalten.
+            © {currentYear} Sponti. Alle Rechte vorbehalten.
           </div>
 
           <div className="flex space-x-6">
+            <div className="text-gray-600 mb-4 md:mb-0">Folge uns</div>
             <a href="#" className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">Twitter</span>
-              <Twitter className="h-6 w-6" />
+              <span className="sr-only">TikTok</span>
+              <AiFillTikTok className="h-6 w-6" />
             </a>
             <a href="#" className="text-gray-400 hover:text-gray-500">
               <span className="sr-only">Instagram</span>
-              <Instagram className="h-6 w-6" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">Facebook</span>
-              <Facebook className="h-6 w-6" />
+              <AiFillInstagram className="h-6 w-6" />
             </a>
           </div>
         </div>

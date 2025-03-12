@@ -15,7 +15,7 @@ export default function Hero() {
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                  SpontanAktiv
+                  Sponti
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-700 mb-6 md:mb-8 max-w-xl mx-auto md:mx-0">

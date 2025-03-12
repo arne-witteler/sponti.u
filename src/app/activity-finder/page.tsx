@@ -37,7 +37,7 @@ export default function ActivityFinder() {
         (error) => {
           console.error("Error getting location:", error);
           setIsLocating(false);
-        },
+        }
       );
     } else {
       alert("Geolocation wird von deinem Browser nicht unterstützt.");
@@ -162,7 +162,10 @@ export default function ActivityFinder() {
                     }
                     className={`justify-start ${preferences.ageGroup === age.value ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
                     onClick={() =>
-                      setPreferences({ ...preferences, ageGroup: age.value })
+                      setPreferences({
+                        ...preferences,
+                        ageGroup: age.value as "children" | "teens" | "adults",
+                      })
                     }
                   >
                     {age.label}

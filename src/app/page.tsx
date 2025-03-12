@@ -18,7 +18,7 @@ export default function Home() {
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                  SpontanAktiv
+                  Sponti
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-700 mb-6 md:mb-8 max-w-xl mx-auto md:mx-0">
@@ -111,7 +111,7 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl font-bold mb-4">Warum SpontanAktiv?</h2>
+            <h2 className="text-3xl font-bold mb-4">Warum Sponti?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Wir machen es einfach, spontan aktiv zu werden
             </p>
@@ -172,8 +172,8 @@ export default function Home() {
             Bereit für spontane Abenteuer?
           </h2>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Entdecke jetzt Aktivitäten in deiner Nähe und mache das Beste aus
-            deiner Freizeit.
+            Entdecke Aktivitäten in deiner Nähe und mache das Beste aus deiner
+            Freizeit.
           </p>
           <Button
             asChild
@@ -181,7 +181,7 @@ export default function Home() {
             className="bg-white text-blue-600 hover:bg-gray-100"
           >
             <Link href="/activity-finder">
-              Jetzt loslegen
+              Jetzt spotan werden
               <ArrowUpRight className="ml-2 w-4 h-4" />
             </Link>
           </Button>

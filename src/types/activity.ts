@@ -6,8 +6,8 @@ export interface Activity {
   location?: string;
   latitude?: number;
   longitude?: number;
-  min_age?: number;
-  max_age?: number;
+  min_age?: number | null;
+  max_age?: number | null;
   min_people?: number;
   max_people?: number;
   start_time?: string;
