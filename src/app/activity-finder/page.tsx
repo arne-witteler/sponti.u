@@ -21,23 +21,55 @@ export default function ActivityFinder() {
   });
   const [isLocating, setIsLocating] = useState(false);
 
+  // ✅ NEU: Standort automatisch abrufen & echte Adresse anzeigen
   const handleLocationDetect = () => {
+    if (isLocating) return; // Verhindert Mehrfachklicks
     setIsLocating(true);
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPreferences({
-            ...preferences,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            location: "Dein aktueller Standort",
-          });
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            // ✅ Google Geocoding API aufrufen (ersetze "DEIN_GOOGLE_API_KEY" mit deinem API-Schlüssel)
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=DEIN_GOOGLE_API_KEY`
+            );
+            const data = await response.json();
+
+            if (data.results.length > 0) {
+              const address = data.results[0].formatted_address; // ✅ Adresse extrahieren
+              setPreferences({
+                ...preferences,
+                latitude,
+                longitude,
+                location: address, // ✅ Speichert echte Adresse
+              });
+            } else {
+              setPreferences({
+                ...preferences,
+                latitude,
+                longitude,
+                location: "Standort nicht gefunden",
+              });
+            }
+          } catch (error) {
+            console.error("Fehler beim Reverse Geocoding:", error);
+            setPreferences({
+              ...preferences,
+              latitude,
+              longitude,
+              location: "Standort konnte nicht geladen werden",
+            });
+          }
+
           setIsLocating(false);
         },
         (error) => {
-          console.error("Error getting location:", error);
+          console.error("Fehler beim Abrufen des Standorts:", error);
           setIsLocating(false);
-        },
+        }
       );
     } else {
       alert("Geolocation wird von deinem Browser nicht unterstützt.");
@@ -45,10 +77,11 @@ export default function ActivityFinder() {
     }
   };
 
+  // ✅ Form-Submit mit allen Präferenzen
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Build query params
+    // Query-Parameter für Weiterleitung erstellen
     const params = new URLSearchParams();
     if (preferences.location) params.append("location", preferences.location);
     if (preferences.people)
@@ -62,7 +95,7 @@ export default function ActivityFinder() {
     if (preferences.longitude)
       params.append("lng", preferences.longitude.toString());
 
-    // Navigate to results page with query params
+    // 🚀 Nutzer wird zur Ergebnissseite weitergeleitet
     router.push(`/activity-finder/results?${params.toString()}`);
   };
 
@@ -80,9 +113,9 @@ export default function ActivityFinder() {
             onSubmit={handleSubmit}
             className="bg-white rounded-xl shadow-md p-6 mb-8"
           >
-            <h2 className="text-xl font-semibold mb-6">Deine Präferenzen</h2>
+            <h2 className="text-xl font-semibold mb-6">Suche</h2>
 
-            {/* Location Selection */}
+            {/* Standortauswahl */}
             <div className="mb-6">
               <Label
                 htmlFor="location"
@@ -91,46 +124,42 @@ export default function ActivityFinder() {
                 Standort
               </Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                {/* ✅ MapPin ist jetzt klickbar und löst die Standorterkennung aus */}
+                <MapPin
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
+                    isLocating
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-400 cursor-pointer hover:text-gray-600"
+                  }`}
+                  onClick={!isLocating ? handleLocationDetect : undefined}
+                />
                 <Input
                   id="location"
-                  placeholder="Dein aktueller Standort"
+                  placeholder="Adresse eingeben"
                   className="pl-10"
                   value={preferences.location}
                   onChange={(e) =>
                     setPreferences({ ...preferences, location: e.target.value })
                   }
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs"
-                  onClick={handleLocationDetect}
-                  disabled={isLocating}
-                >
-                  {isLocating ? "Wird geortet..." : "Orten"}
-                </Button>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Oder erlaube der App, deinen Standort automatisch zu erkennen
+                Klicke auf das Standort-Icon, um deine aktuelle Position zu
+                erkennen.
               </p>
             </div>
 
-            {/* Number of People */}
+            {/* Personenanzahl bleibt unverändert */}
             <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <Label htmlFor="people" className="block text-sm font-medium">
-                  Personenanzahl
-                </Label>
-                <span className="text-sm font-medium text-gray-500">
-                  {preferences.people} Personen
-                </span>
-              </div>
+              <Label className="block text-sm font-medium mb-2">
+                Personenanzahl
+              </Label>
+              <span className="text-sm font-medium text-gray-500">
+                {preferences.people} Personen
+              </span>
               <div className="flex items-center gap-4">
                 <Users className="text-gray-400 h-5 w-5" />
                 <Slider
-                  id="people"
                   defaultValue={[preferences.people || 2]}
                   max={10}
                   min={1}
@@ -143,7 +172,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
-            {/* Age Selection */}
+            {/* Age Selection bleibt unverändert*/}
             <div className="mb-6">
               <Label className="block text-sm font-medium mb-2">
                 Altersgruppe
@@ -174,7 +203,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
-            {/* Time Preference */}
+            {/* Time Preference bleibt unverändert*/}
             <div className="mb-8">
               <Label className="block text-sm font-medium mb-2">
                 Zeitpräferenz
@@ -216,6 +245,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
+            {/* ✅ Aktivitäten suchen Button */}
             <Button
               type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600"
@@ -223,7 +253,6 @@ export default function ActivityFinder() {
               Aktivitäten finden
             </Button>
           </form>
-
           <div className="text-center">
             <p className="text-sm text-gray-500">
               Gib deine Präferenzen ein, um spontane Aktivitäten in deiner Nähe
