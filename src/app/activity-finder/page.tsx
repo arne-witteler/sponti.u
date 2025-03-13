@@ -10,6 +10,10 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ActivityPreferences } from "@/types/activity";
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from "use-places-autocomplete";
 
 export default function ActivityFinder() {
   const router = useRouter();
@@ -21,9 +25,34 @@ export default function ActivityFinder() {
   });
   const [isLocating, setIsLocating] = useState(false);
 
-  // ✅ NEU: Standort automatisch abrufen & echte Adresse anzeigen
+  const {
+    ready,
+    value,
+    setValue,
+    suggestions: { status, data },
+    clearSuggestions,
+  } = usePlacesAutocomplete({ debounce: 300 });
+
+  const handleSelectAddress = async (address: string) => {
+    setValue(address, false);
+    clearSuggestions();
+
+    try {
+      const results = await getGeocode({ address });
+      const { lat, lng } = await getLatLng(results[0]);
+      setPreferences({
+        ...preferences,
+        location: address,
+        latitude: lat,
+        longitude: lng,
+      });
+    } catch (error) {
+      console.error("Fehler bei der Geocodierung:", error);
+    }
+  };
+
   const handleLocationDetect = () => {
-    if (isLocating) return; // Verhindert Mehrfachklicks
+    if (isLocating) return;
     setIsLocating(true);
 
     if (navigator.geolocation) {
@@ -32,7 +61,6 @@ export default function ActivityFinder() {
           const { latitude, longitude } = position.coords;
 
           try {
-            // ✅ Google Geocoding API aufrufen (ersetze "DEIN_GOOGLE_API_KEY" mit deinem API-Schlüssel)
             const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
             const response = await fetch(
               `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
@@ -40,13 +68,14 @@ export default function ActivityFinder() {
             const data = await response.json();
 
             if (data.results.length > 0) {
-              const address = data.results[0].formatted_address; // ✅ Adresse extrahieren
+              const address = data.results[0].formatted_address;
               setPreferences({
                 ...preferences,
                 latitude,
                 longitude,
-                location: address, // ✅ Speichert echte Adresse
+                location: address,
               });
+              setValue(address, false); // Wichtig: Input aktualisieren
             } else {
               setPreferences({
                 ...preferences,
@@ -78,11 +107,14 @@ export default function ActivityFinder() {
     }
   };
 
-  // ✅ Form-Submit mit allen Präferenzen
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Query-Parameter für Weiterleitung erstellen
+    if (!preferences.location) {
+      alert("Bitte gib eine Adresse ein oder nutze die Standorterkennung!");
+      return;
+    }
+
     const params = new URLSearchParams();
     if (preferences.location) params.append("location", preferences.location);
     if (preferences.people)
@@ -96,7 +128,6 @@ export default function ActivityFinder() {
     if (preferences.longitude)
       params.append("lng", preferences.longitude.toString());
 
-    // 🚀 Nutzer wird zur Ergebnissseite weitergeleitet
     router.push(`/activity-finder/results?${params.toString()}`);
   };
 
@@ -116,7 +147,7 @@ export default function ActivityFinder() {
           >
             <h2 className="text-xl font-semibold mb-6">Suche</h2>
 
-            {/* Standortauswahl */}
+            {/* Standortauswahl mit Autocomplete */}
             <div className="mb-6">
               <Label
                 htmlFor="location"
@@ -125,24 +156,48 @@ export default function ActivityFinder() {
                 Standort
               </Label>
               <div className="relative">
-                {/* ✅ MapPin ist jetzt klickbar und löst die Standorterkennung aus */}
+                {/* Standorterkennung über MapPin */}
                 <MapPin
                   className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
                     isLocating
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-400 cursor-pointer hover:text-gray-600"
                   }`}
-                  onClick={!isLocating ? handleLocationDetect : undefined}
+                  onClick={() => !isLocating && handleLocationDetect()}
                 />
+
+                {/* Google Places Autocomplete Input */}
                 <Input
                   id="location"
-                  placeholder="Adresse eingeben"
+                  placeholder="Adresse eingeben oder Standort freigeben"
                   className="pl-10"
-                  value={preferences.location}
-                  onChange={(e) =>
-                    setPreferences({ ...preferences, location: e.target.value })
-                  }
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    setPreferences({
+                      ...preferences,
+                      location: e.target.value,
+                    });
+                  }}
+                  disabled={!ready}
                 />
+
+                {/* Autocomplete-Vorschläge anzeigen */}
+                {status === "OK" && data.length > 0 && (
+                  <ul className="absolute z-10 bg-white border rounded-md w-full mt-1 shadow-md">
+                    {data.map((suggestion, index) => (
+                      <li
+                        key={index}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() =>
+                          handleSelectAddress(suggestion.description)
+                        }
+                      >
+                        {suggestion.description}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 Klicke auf das Standort-Icon, um deine aktuelle Position zu
@@ -173,7 +228,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
-            {/* Age Selection bleibt unverändert*/}
+            {/* Altersgruppe bleibt unverändert */}
             <div className="mb-6">
               <Label className="block text-sm font-medium mb-2">
                 Altersgruppe
@@ -190,7 +245,11 @@ export default function ActivityFinder() {
                     variant={
                       preferences.ageGroup === age.value ? "default" : "outline"
                     }
-                    className={`justify-start ${preferences.ageGroup === age.value ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
+                    className={`justify-start ${
+                      preferences.ageGroup === age.value
+                        ? "bg-orange-500 hover:bg-orange-600 text-white"
+                        : ""
+                    }`}
                     onClick={() =>
                       setPreferences({
                         ...preferences,
@@ -204,7 +263,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
-            {/* Time Preference bleibt unverändert*/}
+            {/* Zeitpräferenz bleibt unverändert */}
             <div className="mb-8">
               <Label className="block text-sm font-medium mb-2">
                 Zeitpräferenz
@@ -217,7 +276,11 @@ export default function ActivityFinder() {
                       ? "default"
                       : "outline"
                   }
-                  className={`justify-start ${preferences.timePreference === "today" ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
+                  className={`justify-start ${
+                    preferences.timePreference === "today"
+                      ? "bg-orange-500 hover:bg-orange-600 text-white"
+                      : ""
+                  }`}
                   onClick={() =>
                     setPreferences({ ...preferences, timePreference: "today" })
                   }
@@ -232,7 +295,11 @@ export default function ActivityFinder() {
                       ? "default"
                       : "outline"
                   }
-                  className={`justify-start ${preferences.timePreference === "tomorrow" ? "bg-orange-500 hover:bg-orange-600 text-white" : ""}`}
+                  className={`justify-start ${
+                    preferences.timePreference === "tomorrow"
+                      ? "bg-orange-500 hover:bg-orange-600 text-white"
+                      : ""
+                  }`}
                   onClick={() =>
                     setPreferences({
                       ...preferences,
@@ -246,7 +313,7 @@ export default function ActivityFinder() {
               </div>
             </div>
 
-            {/* ✅ Aktivitäten suchen Button */}
+            {/* Aktivitäten suchen Button */}
             <Button
               type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600"
@@ -254,6 +321,7 @@ export default function ActivityFinder() {
               Aktivitäten finden
             </Button>
           </form>
+
           <div className="text-center">
             <p className="text-sm text-gray-500">
               Gib deine Präferenzen ein, um spontane Aktivitäten in deiner Nähe
