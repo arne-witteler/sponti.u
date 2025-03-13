@@ -32,33 +32,38 @@ export default function ActivityResults() {
       setLoading(true);
       setError(null);
 
-      try {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              setUserLocation({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              });
+      const lat = searchParams.get("lat");
+      const lng = searchParams.get("lng");
 
-              fetchPlaces(position.coords.latitude, position.coords.longitude);
-            },
-            (error) => {
-              console.error("Fehler beim Abrufen des Standorts:", error);
-              setError("Standort konnte nicht abgerufen werden.");
-              setLoading(false);
-            }
-          );
-        }
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Aktivitäten:", error);
-        setError("Fehler beim Laden der Aktivitäten.");
+      if (lat && lng) {
+        setUserLocation({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        await fetchPlaces(parseFloat(lat), parseFloat(lng)); // ✅ Nutze die eingegebenen Koordinaten
+        return;
+      }
+
+      // Falls keine Adresse angegeben wurde, nutze Geolocation
+      if (!lat && !lng && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            setUserLocation({ lat: latitude, lng: longitude });
+
+            await fetchPlaces(latitude, longitude); // ✅ Nutze Geolocation
+          },
+          (error) => {
+            console.error("Fehler beim Abrufen des Standorts:", error);
+            setError("Standort konnte nicht abgerufen werden.");
+            setLoading(false);
+          }
+        );
+      } else if (!lat || !lng) {
+        setError("Keine Standortdaten verfügbar.");
         setLoading(false);
       }
     };
 
     fetchActivities();
-  }, []);
+  }, [searchParams]);
 
   const fetchPlaces = async (
     latitude: number,

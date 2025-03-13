@@ -40,19 +40,20 @@ export default function ActivityFinder() {
     try {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
-      setPreferences({
-        ...preferences,
+
+      setPreferences((prev) => ({
+        ...prev,
         location: address,
         latitude: lat,
-        longitude: lng,
-      });
+        longitude: lng, // ✅ WICHTIG: Koordinaten setzen
+      }));
     } catch (error) {
       console.error("Fehler bei der Geocodierung:", error);
     }
   };
 
   const handleLocationDetect = () => {
-    if (isLocating) return;
+    if (isLocating || preferences.location) return;
     setIsLocating(true);
 
     if (navigator.geolocation) {
@@ -69,29 +70,29 @@ export default function ActivityFinder() {
 
             if (data.results.length > 0) {
               const address = data.results[0].formatted_address;
-              setPreferences({
-                ...preferences,
+              setPreferences((prev) => ({
+                ...prev,
                 latitude,
                 longitude,
-                location: address,
-              });
+                location: address, // ✅ Speichert echte Adresse
+              }));
               setValue(address, false); // Wichtig: Input aktualisieren
             } else {
-              setPreferences({
-                ...preferences,
+              setPreferences((prev) => ({
+                ...prev,
                 latitude,
                 longitude,
                 location: "Standort nicht gefunden",
-              });
+              }));
             }
           } catch (error) {
             console.error("Fehler beim Reverse Geocoding:", error);
-            setPreferences({
-              ...preferences,
+            setPreferences((prev) => ({
+              ...prev,
               latitude,
               longitude,
               location: "Standort konnte nicht geladen werden",
-            });
+            }));
           }
 
           setIsLocating(false);
@@ -110,23 +111,23 @@ export default function ActivityFinder() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!preferences.location) {
+    if (!preferences.location && !preferences.latitude) {
       alert("Bitte gib eine Adresse ein oder nutze die Standorterkennung!");
       return;
     }
 
     const params = new URLSearchParams();
     if (preferences.location) params.append("location", preferences.location);
+    if (preferences.latitude)
+      params.append("lat", preferences.latitude.toString());
+    if (preferences.longitude)
+      params.append("lng", preferences.longitude.toString());
     if (preferences.people)
       params.append("people", preferences.people.toString());
     if (preferences.ageGroup)
       params.append("ageGroup", preferences.ageGroup.toString());
     if (preferences.timePreference)
       params.append("timePreference", preferences.timePreference);
-    if (preferences.latitude)
-      params.append("lat", preferences.latitude.toString());
-    if (preferences.longitude)
-      params.append("lng", preferences.longitude.toString());
 
     router.push(`/activity-finder/results?${params.toString()}`);
   };
