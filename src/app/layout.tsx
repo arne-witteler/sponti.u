@@ -22,7 +22,7 @@ export default function RootLayout({
       <head>
         {/* ✅ Google Maps API einbinden */}
         <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places&callback=Function.prototype`}
           strategy="beforeInteractive"
         />
       </head>
