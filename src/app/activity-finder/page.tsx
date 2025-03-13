@@ -33,8 +33,9 @@ export default function ActivityFinder() {
 
           try {
             // ✅ Google Geocoding API aufrufen (ersetze "DEIN_GOOGLE_API_KEY" mit deinem API-Schlüssel)
+            const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
             const response = await fetch(
-              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=DEIN_GOOGLE_API_KEY`
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
             );
             const data = await response.json();
 
