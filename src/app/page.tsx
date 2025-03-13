@@ -78,7 +78,7 @@ export default function Home() {
                 icon: <MapPin className="w-8 h-8" />,
                 title: "Standort teilen",
                 description:
-                  "Gib deinen Standort an oder erlaube der App, ihn automatisch zu erkennen.",
+                  "Gib deinen Standort an oder erlaube Sponti, ihn automatisch zu erkennen.",
               },
               {
                 icon: <Users className="w-8 h-8" />,
