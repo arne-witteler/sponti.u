@@ -10,52 +10,37 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 md:pt-20 lg:pt-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-yellow-50 opacity-70" />
+      <section className="relative overflow-hidden h-[500px] flex items-center justify-center py-24">
+        {/* Hintergrundbild */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/herobanner.png')" }}
+        />
+        {/* Overlay für bessere Lesbarkeit */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/10" />
+
         <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">
-                  Sponti
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-700 mb-6 md:mb-8 max-w-xl mx-auto md:mx-0">
-                Entdecke spontane Freizeitaktivitäten in deiner Nähe mit nur
-                wenigen Klicks.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
-                >
-                  <Link href="/activity-finder">
-                    Aktivitäten finden
-                    <ArrowUpRight className="ml-2 w-5 h-5" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link href="/dashboard">Zum Dashboard</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="flex-1 mt-8 md:mt-0">
-              <div className="relative w-full max-w-md mx-auto md:mx-0 md:ml-auto aspect-[4/3] rounded-xl overflow-hidden shadow-xl">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="w-full h-full object-cover"
-                >
-                  <source
-                    src="https://www.youtube.com/watch?v=qEEBR3Hwf3s"
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
+          <div className="flex flex-col items-center text-center text-white">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">
+                Sponti
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl max-w-2xl">
+              Entdecke spontane Freizeitaktivitäten in deiner Nähe mit nur
+              wenigen Klicks.
+            </p>
+            <div className="mt-8">
+              <Button
+                asChild
+                size="lg"
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <Link href="/activity-finder">
+                  Aktivitäten finden
+                  <ArrowUpRight className="ml-2 w-5 h-5" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
