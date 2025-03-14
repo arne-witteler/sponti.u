@@ -53,7 +53,7 @@ export default function ActivityFinder() {
   };
 
   const handleLocationDetect = () => {
-    if (isLocating || preferences.location) return;
+    if (isLocating) return;
     setIsLocating(true);
 
     if (navigator.geolocation) {
