@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "../../supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "./ui/button";
@@ -23,8 +24,15 @@ export default function Navbar() {
   return (
     <nav className="w-full border-b border-gray-200 bg-white py-3 sticky top-0 z-50">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" prefetch className="text-xl font-bold text-orange-500">
-          Sponti
+        <Link href="/">
+          <Image
+            src="/images/logo.png"
+            alt="Sponti Logo"
+            width={80} // Größe anpassen
+            height={80}
+            priority // Lädt das Bild schneller
+            className="h-12 w-auto md:h-12 lg:h-16"
+          />
         </Link>
 
         <div className="hidden md:flex gap-6 items-center">
