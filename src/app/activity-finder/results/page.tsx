@@ -21,7 +21,7 @@ export default function ActivityResults() {
     { lat: number; lng: number } | undefined
   >();
 
-  // Präferenzen aus URL-Parametern holen
+  // Präferenzen aus URL-Parametern holen (falls vorhanden)
   const location = searchParams.get("location");
   const people = searchParams.get("people");
   const ageGroup = searchParams.get("ageGroup");
@@ -37,7 +37,7 @@ export default function ActivityResults() {
 
       if (lat && lng) {
         setUserLocation({ lat: parseFloat(lat), lng: parseFloat(lng) });
-        await fetchPlaces(parseFloat(lat), parseFloat(lng)); // ✅ Nutze die eingegebenen Koordinaten
+        await fetchPlaces(parseFloat(lat), parseFloat(lng)); // Nutze die eingegebenen Koordinaten
         return;
       }
 
@@ -47,8 +47,7 @@ export default function ActivityResults() {
           async (position) => {
             const { latitude, longitude } = position.coords;
             setUserLocation({ lat: latitude, lng: longitude });
-
-            await fetchPlaces(latitude, longitude); // ✅ Nutze Geolocation
+            await fetchPlaces(latitude, longitude);
           },
           (error) => {
             console.error("Fehler beim Abrufen des Standorts:", error);
@@ -72,7 +71,7 @@ export default function ActivityResults() {
   ) => {
     try {
       let response = await fetch(
-        `/api/getPlaces?lat=${latitude}&lng=${longitude}&radius=${radius}&type=point_of_interest`
+        `/api/getPlaces?lat=${latitude}&lng=${longitude}&radius=${radius}`
       );
       let data = await response.json();
 
@@ -84,7 +83,7 @@ export default function ActivityResults() {
         console.warn(`⚠️ Keine Orte gefunden, erhöhe Radius auf ${radius}m...`);
 
         response = await fetch(
-          `/api/getPlaces?lat=${latitude}&lng=${longitude}&radius=${radius}&type=point_of_interest`
+          `/api/getPlaces?lat=${latitude}&lng=${longitude}&radius=${radius}`
         );
         data = await response.json();
         attempt++;
@@ -97,38 +96,35 @@ export default function ActivityResults() {
         return;
       }
 
-      // ✅ Wähle maximal 3 Orte
-      const selectedPlaces = data.slice(0, 3);
-
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
-      const formattedActivities: Activity[] = selectedPlaces.map(
-        (place: any, index: number) => ({
-          id: place.place_id || `activity-${index}`,
-          title: place.name,
-          description: "",
-          image_url: place.photos?.[0]?.photo_reference
-            ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${apiKey}`
-            : "https://via.placeholder.com/400",
-          location: place.vicinity || "Unbekannter Standort",
-          latitude: place.geometry.location.lat,
-          longitude: place.geometry.location.lng,
-          min_age: null,
-          max_age: null,
-          min_people: null,
-          max_people: null,
-          start_time: null,
-          end_time: null,
-          price: null,
-          booking_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`,
-        })
-      );
+      // Mapping: Verwende die Felder aus deiner DB (activities-Tabelle)
+      const formattedActivities: Activity[] = data.map((activity: any) => ({
+        id: activity.id,
+        title: activity.name,
+        description: activity.description,
+        image_url: activity.image_url || "https://via.placeholder.com/400",
+        location: activity.address,
+        latitude: activity.latitude,
+        longitude: activity.longitude,
+        // Optional: weitere Felder
+        min_age: null,
+        max_age: null,
+        min_people: null,
+        max_people: null,
+        start_time: null,
+        end_time: null,
+        price: null,
+        booking_url: activity.website
+          ? activity.website
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              activity.name
+            )}`,
+      }));
 
       setActivities(formattedActivities);
     } catch (err) {
       console.error("❌ Fehler beim Abrufen der Orte:", err);
       setError("Fehler beim Abrufen der Orte.");
     }
-
     setLoading(false);
   };
 
@@ -198,6 +194,7 @@ export default function ActivityResults() {
     </div>
   );
 }
+
 function generateRandomActivities(
   latitude: number,
   longitude: number
