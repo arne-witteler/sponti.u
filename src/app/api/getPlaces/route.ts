@@ -1,38 +1,57 @@
 import { NextResponse } from "next/server";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const lat = searchParams.get("lat");
-  const lng = searchParams.get("lng");
-  const radius = searchParams.get("radius") || "2000";
-  const type = searchParams.get("type") || "point_of_interest";
+  const latStr = searchParams.get("lat");
+  const lngStr = searchParams.get("lng");
+  const radiusStr = searchParams.get("radius") || "5000"; // in Metern
 
-  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
-
-  if (!API_KEY) {
-    return NextResponse.json({ error: "Google API Key fehlt" }, { status: 500 });
+  if (!latStr || !lngStr) {
+    return NextResponse.json({ error: "Latitude oder Longitude fehlt" }, {
+      status: 400,
+    });
   }
 
-  if (!lat || !lng) {
-    return NextResponse.json({ error: "Latitude oder Longitude fehlt" }, { status: 400 });
-  }
+  const lat = parseFloat(latStr);
+  const lng = parseFloat(lngStr);
+  const radius = parseFloat(radiusStr);
+  const radiusKm = radius / 1000; // Umrechnung in Kilometer
 
-  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${API_KEY}`;
-  console.log("🔎 API-Aufruf:", url); // Debugging
+  // Öffne die SQLite-Datenbank (Passe den Pfad an, falls nötig)
+  const db = await open({
+    filename: "./data/database.sqlite",
+    driver: sqlite3.Database,
+  });
+
+  // Verwende einen Subquery, um zuerst den Abstand (distance) zu berechnen und dann mit WHERE zu filtern
+  const query = `
+    SELECT * FROM (
+      SELECT *,
+        (6371 * acos(
+          cos(radians(?))
+          * cos(radians(latitude))
+          * cos(radians(longitude) - radians(?))
+          + sin(radians(?))
+          * sin(radians(latitude))
+        )) AS distance
+      FROM activities
+    ) AS sub
+    WHERE distance < ?
+    ORDER BY distance
+    LIMIT 3;
+  `;
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.error_message) {
-      console.error("❌ Google API Fehler:", data.error_message);
-      return NextResponse.json({ error: data.error_message }, { status: 500 });
-    }
-
-    console.log("✅ Orte gefunden:", data.results.length);
-    return NextResponse.json(data.results);
+    const activities = await db.all(query, lat, lng, lat, radiusKm);
+    console.log("Gefundene Aktivitäten:", activities.length);
+    return NextResponse.json(activities);
   } catch (error) {
-    console.error("❌ Fehler beim Abrufen der Daten:", error);
-    return NextResponse.json({ error: "Fehler beim Abrufen der Daten" }, { status: 500 });
+    console.error("Fehler beim Abrufen der Aktivitäten:", error);
+    return NextResponse.json({
+      error: "Datenbankfehler",
+      details: error instanceof Error ? error.message : error,
+    }, { status: 500 });
   }
 }
